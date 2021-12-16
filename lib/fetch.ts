@@ -1,7 +1,18 @@
 import { proto } from "@adiwajshing/baileys-md";
 import { WAConn } from "./conn";
 
-export type fetchedMsg = { from: string; sender: string; senderNumber: string; msgType: string; cmd: string; body: string; isCmd: boolean; args: Array<string>; message: string; pushname: string };
+export type fetchedMsg = {
+  from: string;
+  sender: string;
+  senderNumber: string;
+  msgType: string;
+  cmd: string;
+  body: string;
+  isCmd: boolean;
+  args: Array<string>;
+  message: string;
+  pushname: string;
+};
 
 export default async function (conn: WAConn, chat: proto.IWebMessageInfo): Promise<fetchedMsg> {
   let from = chat.key.remoteJid;
