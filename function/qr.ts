@@ -27,6 +27,6 @@ export function txt2qr(text:string):Promise<Buffer>{
                if(!e.ok) return reject("err fetch qr")
                let buff = await e.buffer()
                await resolve(buff)
-          }).cath(reject)
+          }).catch(reject)
      })
 }
