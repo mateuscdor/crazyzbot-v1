@@ -24,6 +24,7 @@ export class WAConn {
           jid && (await this.sock.presenceSubscribe(jid));
           await this.sock!.sendReadReceipt(jid, chat.key.participant || chat.key.remoteJid, [chat.key.id]);
           let msgFetched = await fetchMsg(this, chat)
+          if(msgFetched.body == "prefix") return this.reply(msgFetched.from, this.setting.prefix, chat)
           if(msgFetched.isCmd) for await(let plugins of Object.keys(global.handler)) {
             let plugin = global.handler[plugins];
             if (plugin.prefix.includes(msgFetched.cmd)) {
@@ -56,8 +57,12 @@ export class WAConn {
     startSock();
   }
 
+  cekPrefix(){
+    return this.setting.prefix;
+  }
+
   setPrefix(prefix:string){
-    global.conn[this.id].setting.prefix = prefix;
+    this.setting.prefix = prefix;
   }
 
   reply(jid: string, text: string, quoted: proto.IWebMessageInfo) {
