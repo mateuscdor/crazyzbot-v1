@@ -3,6 +3,7 @@ import P from "pino";
 import { WAConn } from "../lib/conn";
 import qrcode = require("qrcode");
 import lzutf8 = require("lzutf8");
+import {txt2qr} from "../function"
 let log = console.log;
 
 export function handler(_conn: WAConn, chat: proto.IWebMessageInfo) {
@@ -29,14 +30,26 @@ export function handler(_conn: WAConn, chat: proto.IWebMessageInfo) {
       let qr:string = update.qr;
       if(!qr) return;
       log("getQR")
-      qrcode.toDataURL(qr, async function (err: any, url: string) {
-        if(prev) {
-          _conn.sock.sendMessage(from, { delete: prev.key })
-        }
-        if (err) return _conn.reply(from, "error", chat);
-        let qrImg = await Buffer.from(url.split("base64,")[1] || url, "base64")
-        prev = await _conn.sock.sendMessage(from, {image:qrImg, caption:"scan this qr"}, {quoted:chat});
-      });
+      // qrcode.toDataURL(qr, async function (err: any, url: string) {
+      //   if(prev) {
+      //     _conn.sock.sendMessage(from, { delete: prev.key })
+      //   }
+      //   if (err) return _conn.reply(from, "error", chat);
+      //   let qrImg = await Buffer.from(url.split("base64,")[1] || url, "base64")
+      //   prev = await _conn.sock.sendMessage(from, {image:qrImg, caption:"scan this qr"}, {quoted:chat});
+      // });
+
+      txt2qr(qr)
+      .then(async qrImg=>{
+          if(prev) {
+            _conn.sock.sendMessage(from, { delete: prev.key })
+          }
+          prev = await _conn.sock.sendMessage(from, {image:qrImg, caption:"scan this qr"}, {quoted:chat});
+      })
+      .catch(e=>{
+        log(e)
+        if (e) return _conn.reply(from, "error", chat);
+      })
     });
   }
   startSock();

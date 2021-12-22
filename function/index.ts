@@ -1,0 +1,1 @@
+export {txt2qr} from "./qr"

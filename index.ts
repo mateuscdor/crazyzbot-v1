@@ -27,7 +27,7 @@ function startSock() {
   sock.ev.on("creds.update", function (state) {
     // log(JSON.parse(JSON.stringify(state, BufferJSON.replacer), BufferJSON.reviver));
   });
-
+  
   sock.ev.on("connection.update", (update) => {
     let qr = update.qr;
     qr && log("scan qr");
@@ -44,7 +44,7 @@ function startSock() {
     }
   }
 
-  if(Boolean(argv["unwatch"])) fs.watch(path.join(__dirname, 'handler'), {recursive:true}, (event, filename) => {
+  if(Boolean(argv["watch"])) fs.watch(path.join(__dirname, 'handler'), {recursive:true}, (event, filename) => {
     let plugin = filename.slice(0,-3)
     let file = path.join(__dirname, 'handler', filename);
     require.cache[file] && delete require.cache[file]

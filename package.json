@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.ts",
   "scripts": {
-    "test": "nodemon -x ts-node index.ts"
+    "test": "nodemon -x ts-node index.ts",
+    "start": "ts-node index.ts",
+    "start:test": "ts-node index.ts --watch"
   },
   "author": "",
   "license": "ISC",
