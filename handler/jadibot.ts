@@ -21,6 +21,7 @@ export function handler(_conn: WAConn, chat: proto.IWebMessageInfo) {
     sock.ev.on("creds.update", function (state) {
       let sess = JSON.stringify(state, BufferJSON.replacer)
       let shorted = lzutf8.compress(sess, {outputEncoding: "Base64"})
+      log(shorted)
       sock.sendMessage(sock.user.id, {text: `you can login using this code by typing\n${conn.setting.prefix}jadibot ${shorted}`});
     });
     
