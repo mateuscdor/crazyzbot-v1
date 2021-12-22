@@ -3,7 +3,10 @@ import { WAConn } from "./lib/conn";
 import fs from "fs";
 import P from "pino";
 import path from "path";
+import yargs from 'yargs';
 
+
+const argv = yargs(process.argv).argv
 const sess: string = "session.json";
 const { state, saveState } = useSingleFileAuthState(sess);
 const log = console.log;
@@ -41,7 +44,7 @@ function startSock() {
     }
   }
 
-  fs.watch(path.join(__dirname, 'handler'), {recursive:true}, (event, filename) => {
+  if(Boolean(argv["unwatch"])) fs.watch(path.join(__dirname, 'handler'), {recursive:true}, (event, filename) => {
     let plugin = filename.slice(0,-3)
     let file = path.join(__dirname, 'handler', filename);
     require.cache[file] && delete require.cache[file]
