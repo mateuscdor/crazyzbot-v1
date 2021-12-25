@@ -1,7 +1,7 @@
 import makeWASocket, { WASocket, SocketConfig, proto, WAMessageContent, decryptMediaMessageBuffer, WAMediaUpload, DisconnectReason } from "@adiwajshing/baileys-md";
 import { Boom } from "@hapi/boom";
-import fetchMsg from "./fetch"
-let setting = require("../setting.json")
+import fetchMsg from "./fetch";
+let setting = require("../setting.json");
 let log = console.log;
 
 export class WAConn {
@@ -11,7 +11,7 @@ export class WAConn {
 
   constructor(args: Partial<SocketConfig>) {
     if (!global.conn) global.conn = {};
-    this.setting = setting
+    this.setting = setting;
     let startSock = () => {
       this.sock = makeWASocket(args);
 
@@ -19,18 +19,22 @@ export class WAConn {
         // console.log(JSON.stringify(m, undefined, 2))
         const chat = m.messages[0];
         if (m.type === "notify") {
-          // if (!chat.message) return log(JSON.stringify(chat, null, 2));
+          if (!chat.message) return; //log(JSON.stringify(chat, null, 2));
+          delete chat.message?.messageContextInfo;
+          if (Object.keys(chat.message).length == 0) return;
+
           let jid = chat.key.remoteJid;
           jid && (await this.sock.presenceSubscribe(jid));
           await this.sock!.sendReadReceipt(jid, chat.key.participant || chat.key.remoteJid, [chat.key.id]);
-          let msgFetched = await fetchMsg(this, chat)
-          if(msgFetched.body == "prefix") return this.reply(msgFetched.from, this.setting.prefix, chat)
-          if(msgFetched.isCmd) for await(let plugins of Object.keys(global.handler)) {
-            let plugin = global.handler[plugins];
-            if (plugin.prefix.includes(msgFetched.cmd)) {
-              plugin.handler(this, chat, msgFetched);
+          let msgFetched = await fetchMsg(this, chat);
+          if (msgFetched.body == "prefix") return this.reply(msgFetched.from, this.setting.prefix, chat);
+          if (msgFetched.isCmd)
+            for await (let plugins of Object.keys(global.handler)) {
+              let plugin = global.handler[plugins];
+              if (plugin.prefix.includes(msgFetched.cmd)) {
+                plugin.handler(this, chat, msgFetched);
+              }
             }
-          }
         }
       });
 
@@ -57,15 +61,15 @@ export class WAConn {
     startSock();
   }
 
-  stop(){
-    this.sock.end(new Error("Connection closed"))
+  stop() {
+    this.sock.end(new Error("Connection closed"));
   }
 
-  cekPrefix(){
+  cekPrefix() {
     return this.setting.prefix;
   }
 
-  setPrefix(prefix:string){
+  setPrefix(prefix: string) {
     this.setting.prefix = prefix;
   }
 
