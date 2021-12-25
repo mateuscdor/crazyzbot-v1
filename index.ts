@@ -10,6 +10,7 @@ const argv = yargs(process.argv).argv
 const sess: string = "session.json";
 const { state, saveState } = useSingleFileAuthState(sess);
 const log = console.log;
+Boolean(argv["watch"]) && log("watching handler")
 
 // let str = JSON.stringify(state, BufferJSON.replacer)
 // let obj = JSON.parse(str, BufferJSON.reviver);

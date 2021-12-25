@@ -57,6 +57,10 @@ export class WAConn {
     startSock();
   }
 
+  stop(){
+    this.sock.end(new Error("Connection closed"))
+  }
+
   cekPrefix(){
     return this.setting.prefix;
   }
