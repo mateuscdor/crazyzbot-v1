@@ -9,6 +9,7 @@ export type fetchedMsg = {
   cmd: string;
   body: string;
   isCmd: boolean;
+  usedPrefix:string;
   args: Array<string>;
   message: string;
   pushname: string;
@@ -36,8 +37,9 @@ export default async function (conn: WAConn, chat: proto.IWebMessageInfo): Promi
   chat.message = msgType == "ephemeralMessage" ? chat.message.ephemeralMessage.message : chat.message;
   let message = msgType == "conversation" ? chat.message.conversation : msgType == "imageMessage" || msgType == "videoMessage" ? chat.message[msgType].caption : msgType == "extendedTextMessage" ? chat.message.extendedTextMessage.text : "";
   let args = message.split(" ");
-  let isCmd = args[0].startsWith(conn.setting.prefix);
-  let cmd = isCmd ? args[0].replace(conn.setting.prefix, "").toLowerCase() : "";
+  let isCmd = conn.setting.prefix.includes(args[0].slice(0,1))
+  let usedPrefix = isCmd ? args[0].slice(0,1) : ""
+  let cmd = isCmd ? args[0].slice(1).toLowerCase() : null;
   isCmd && args.shift();
   let body = args.join(" ");
 
@@ -53,5 +55,5 @@ export default async function (conn: WAConn, chat: proto.IWebMessageInfo): Promi
   let isOwner = conn.setting.owner.includes(senderNumber);
   let isMe = chat.key.fromMe
   
-  return await { from, msgType, cmd, body, isCmd, args, message, sender, senderNumber, pushname, tagList, quotedMessage, quotedType, media, mediaType, isStickerGif, isGroup, isBtn, isList, isOwner, isMe};
+  return await { from, msgType, cmd, body, isCmd, args, message, sender, senderNumber, pushname, tagList, quotedMessage, quotedType, media, mediaType, isStickerGif, isGroup, isBtn, isList, isOwner, isMe, usedPrefix};
 }

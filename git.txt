@@ -1,0 +1,5 @@
+git fetch
+git stash 
+git pull -f
+
+git checkout --theirs -- <filename>
