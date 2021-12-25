@@ -10,7 +10,8 @@ const argv = yargs(process.argv).argv
 const sess: string = "session.json";
 const { state, saveState } = useSingleFileAuthState(sess);
 const log = console.log;
-Boolean(argv["watch"]) && log("watching handler")
+let isWatch = Boolean(argv["watch"])
+isWatch && log("watching handler")
 
 // let str = JSON.stringify(state, BufferJSON.replacer)
 // let obj = JSON.parse(str, BufferJSON.reviver);
@@ -45,7 +46,7 @@ function startSock() {
     }
   }
 
-  if(Boolean(argv["watch"])) fs.watch(path.join(__dirname, 'handler'), {}, (event, filename) => {
+  if(isWatch) fs.watch(path.join(__dirname, 'handler'), {}, (event, filename) => {
     let plugin = filename.slice(0,-3)
     let file = path.join(__dirname, 'handler', filename);
     require.cache[file] && delete require.cache[file]
