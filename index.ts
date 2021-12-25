@@ -45,7 +45,7 @@ function startSock() {
     }
   }
 
-  if(Boolean(argv["watch"])) fs.watch(path.join(__dirname, 'handler'), {recursive:true}, (event, filename) => {
+  if(Boolean(argv["watch"])) fs.watch(path.join(__dirname, 'handler'), {}, (event, filename) => {
     let plugin = filename.slice(0,-3)
     let file = path.join(__dirname, 'handler', filename);
     require.cache[file] && delete require.cache[file]
