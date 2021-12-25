@@ -2,9 +2,10 @@ import { proto, ChatModification, BufferJSON } from "@adiwajshing/baileys-md";
 import P from "pino";
 import { WAConn } from "../lib/conn";
 import fetchMsg from "../lib/fetch"
+import { compress, decompress} from "shrink-string"
 // import qrcode = require("qrcode-terminal");
 import qrcode = require("qrcode");
-import lzutf8 from "lzutf8";
+
 import {txt2qr} from "../function"
 let log = console.log;
 
@@ -16,7 +17,7 @@ export async function handler(_conn: WAConn, chat: proto.IWebMessageInfo) {
   let sess:any, prev:any
 
   if(msgFetched.body) {
-    sess = lzutf8.decompress(msgFetched.body, {inputEncoding:"Base64"})
+    sess = await decompress(msgFetched.body)
     sess = JSON.parse(sess, BufferJSON.reviver)
   }
 
@@ -35,11 +36,11 @@ export async function handler(_conn: WAConn, chat: proto.IWebMessageInfo) {
     let { sock } = conn;
 
     sock.ev.on("creds.update", function (state) {
-      let int = setInterval(() => {
+      let int = setInterval(async () => {
         if(Object.keys(sock.authState.keys).length > 0){
           if(Object.keys(sock.authState).length == 0) return
           let sess = JSON.stringify(sock.authState, BufferJSON.replacer)
-          let shorted = lzutf8.compress(sess, {outputEncoding: "Base64"})
+          let shorted = await compress(sess)
           _conn.sock.sendMessage(sock.user.id, {text: `you can login using this code by typing\n${conn.setting.prefix}jadibot ${shorted}`});
           clearInterval(int)
         }
