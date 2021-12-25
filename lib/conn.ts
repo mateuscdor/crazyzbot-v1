@@ -28,7 +28,7 @@ export class WAConn {
           await this.sock!.sendReadReceipt(jid, chat.key.participant || chat.key.remoteJid, [chat.key.id]);
           let msgFetched = await fetchMsg(this, chat);
           
-          if (msgFetched.body == "prefix") return this.reply(msgFetched.from, this.setting.prefix.join(", "), chat);
+          if (msgFetched.body == "prefix") return this.reply(msgFetched.from, "prefix yang dapat digunakan:\n- "+this.setting.prefix.join("\n- "), chat);
 
           if (msgFetched.isCmd)
             for await (let plugins of Object.keys(global.handler)) {
